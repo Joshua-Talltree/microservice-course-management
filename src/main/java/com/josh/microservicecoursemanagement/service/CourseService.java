@@ -12,5 +12,7 @@ public interface CourseService {
 
     List<Transaction> findTransactionsOfUser(Long userId);
 
+    List<Transaction> findTransactionsOfCourse(Long courseId);
+
     Transaction saveTransaction(Transaction transaction);
 }
