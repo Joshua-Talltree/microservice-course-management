@@ -3,7 +3,11 @@ package com.josh.microservicecoursemanagement.controller;
 import com.josh.microservicecoursemanagement.intercomm.UserClient;
 import com.josh.microservicecoursemanagement.model.Transaction;
 import com.josh.microservicecoursemanagement.service.CourseService;
+import com.netflix.discovery.DiscoveryEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -21,6 +25,25 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
+    @Autowired
+    private Environment env;
+
+    @Value("${spring.application.name}")
+    private String serviceId;
+
+    @GetMapping("/service/port")
+    public String getPort() {
+        return "Service is working at port : " + env.getProperty("local.server.port");
+    }
+
+    @GetMapping("/service/instances")
+    public ResponseEntity<?>getInstances() {
+        return ResponseEntity.ok(discoveryClient.getInstances(serviceId));
+    }
 
     @GetMapping("/service/user/{userId}")
     public ResponseEntity<?> findTransactionsOfUser(@PathVariable Long userId) {
